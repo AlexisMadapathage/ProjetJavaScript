@@ -208,3 +208,43 @@ footer nav ul {
 	margin: 2em
 }
 
+.login-container {
+	display: flex; 
+    justify-content: center; 
+    align-items: center; 
+	flex-direction: column;
+	gap: 15px; 
+} 
+
+.login-container form {
+	display: flex;
+    flex-direction: column;
+	gap: 15px;
+}
+
+.login-container button {
+	border: 2px solid #1D6154;
+	border-radius: 20px;
+	background-color: #1D6154;
+	color: white;
+	font-family: 'Syne';
+	font-size: 16px;
+	padding: 10px 20px;
+}
+
+.login-container h2 {
+	margin: 10px 0;
+}
+
+.forgot-password {
+	color: black;
+	font-size: 11px;
+	margin-top: 15px;
+}
+
+.pied {
+	display: flex;
+	justify-content: flex-end;
+	margin: 2em;
+	font-size: 11px;
+}

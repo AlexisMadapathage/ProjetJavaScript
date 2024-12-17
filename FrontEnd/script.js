@@ -4,6 +4,7 @@ const filtersContainer = document.getElementById("filtres");
 let projetsGlobaux = [];
 
 fetchProjets();
+creerBtnFiltres();
 
 async function fetchProjets() {
     try {
@@ -76,4 +77,3 @@ async function filtrerProjets(categoryId) {
         afficherProjets(projetsFiltres);
 }
 
-creerBtnFiltres();
