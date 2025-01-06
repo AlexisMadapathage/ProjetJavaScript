@@ -25,9 +25,7 @@ async function chargerImagesModale() {
         const travaux = await response.json();
 
         const modaleGallery = document.querySelector(".modale-gallery");
-        console.log("Avant vidage :", modaleGallery.innerHTML); // Log avant vidage
         modaleGallery.innerHTML = ""; // Vide le conteneur avant d'ajouter les images
-        console.log("Après vidage :", modaleGallery.innerHTML); // Log après vidage
 
         travaux.forEach(travail => {
             const figure = document.createElement("figure");
@@ -54,7 +52,7 @@ async function chargerImagesModale() {
 }
 
 // Fonction pour supprimer une photo
-function supprimerPhoto(photoId, figureElement) {
+function supprimerPhoto(photoId) {
     fetch("http://localhost:5678/api/works/" + photoId, {
         method: "DELETE",
         headers: {
@@ -65,10 +63,6 @@ function supprimerPhoto(photoId, figureElement) {
         .then(function (response) {
             if (response.ok) {
                 console.log("Photo supprimée avec succès !");
-                figureElement.remove(); // Supprime l'élément du DOM
-            } else {
-                console.error("Erreur lors de la suppression de la photo :", response.status);
-                alert("Erreur lors de la suppression de la photo.");
             }
         })
         .catch(function (error) {
@@ -77,16 +71,13 @@ function supprimerPhoto(photoId, figureElement) {
         });
 }
 
-// Initialisation à la charge de la page
-document.addEventListener("DOMContentLoaded", () => {
-    const btnModifier = document.getElementById("modifier-button");
+const btnModifier = document.getElementById("modifier-button");
 
-    // Création de la modale uniquement une fois
-    creerModale();
+// Création de la modale uniquement une fois
+creerModale();
 
-    btnModifier.addEventListener("click", () => {
-        afficherModale();
-    });
+btnModifier.addEventListener("click", () => {
+    afficherModale();
 });
 
 // Fonction principale pour créer la première modale 
@@ -96,35 +87,32 @@ function creerModale() {
     const modale = document.createElement("div");
     const closeButton = document.createElement("span");
     const modaleContent = document.createElement("div");
-    const galleryView = document.createElement("div");
+    //const galleryView = document.createElement("div");
 
     // Ajout des classes
     modaleOverlay.classList.add("modale-overlay");
     modale.classList.add("modale");
     closeButton.classList.add("close-button");
     modaleContent.classList.add("modale-content");
-    galleryView.classList.add("gallery-view", "active");
+    //galleryView.classList.add("gallery-view", "active");
 
     // Contenu des éléments HTML
     closeButton.innerHTML = "&times;"; // Symbole de fermeture
-    galleryView.innerHTML = `
-    <h2>Galerie photo</h2>
-    <div class="modale-gallery"></div> <!-- Conteneur pour les images -->
-    <div class="trait"></div>
-    <button class="btn-ajouter-photo">Ajouter une photo</button>
-`;
+
+    // Récupère le contenu du template pour la galerie
+    const galleryTemplate = document.getElementById("gallery-template");
+    modaleContent.appendChild(galleryTemplate.content.cloneNode(true));
 
     // Organisation de la structure
-    modaleContent.appendChild(galleryView); // Vue galerie
-    modale.appendChild(closeButton); // Bouton de fermeture
-    modale.appendChild(modaleContent); // Contenu de la modale
-    modaleOverlay.appendChild(modale); // Ajout de la modale à l'overlay
-    document.body.appendChild(modaleOverlay); // Ajout au DOM
+    modale.appendChild(closeButton); 
+    modale.appendChild(modaleContent); 
+    modaleOverlay.appendChild(modale); 
+    document.body.appendChild(modaleOverlay); 
 
     // Gestion de la fermeture de la modale
     closeButton.addEventListener("click", fermerModale);
     modaleOverlay.addEventListener("click", (event) => {
-        if (event.target === modaleOverlay && !event.target.closest(".modale")) {
+        if (event.target === modaleOverlay) {
             fermerModale();
         }
     });
@@ -132,71 +120,37 @@ function creerModale() {
     // Gestion de l'ouverture de la deuxième modale (formulaire)
     const btnAjouterPhoto = modale.querySelector(".btn-ajouter-photo");
     if (btnAjouterPhoto) {
-        console.log("Bouton 'Ajouter une photo' trouvée :", btnAjouterPhoto);
-        btnAjouterPhoto.addEventListener("click", () => {
-            console.log("Clic sur Ajouter une photo");
-            afficherFormulaireModale();
-        });
-    } else {
-        console.error("Bouton 'Ajouter une photo' non trouvé.")
-    }
+        btnAjouterPhoto.addEventListener("click", afficherFormulaireModale);
+    };
 }
 
 // Fonction pour afficher la deuxième modale (formulaire d'ajout de photo)
 function afficherFormulaireModale() {
     // Création des éléments principaux 
-    console.log("La fonction afficherFormulaireModale est appelée");
     const formOverlay = document.createElement("div");
     const formModale = document.createElement("div");
     const backButton = document.createElement("span");
     const closeButton = document.createElement("span");
-    const formContent = document.createElement("div");
 
     // Ajout des classes
     formOverlay.classList.add("form-overlay");
     formModale.classList.add("form-modale");
     backButton.classList.add("back-button");
     closeButton.classList.add("close-button");
-    formContent.classList.add("form-content");
 
     // Contenu des éléments HTML
     backButton.innerHTML = `<i class="fa-solid fa-arrow-left"></i>`;
     closeButton.innerHTML = "&times;";
-    formContent.innerHTML = `
-        <h2>Ajout photo</h2>
-        <form id="ajout-photo-form" class="ajout-photo-form">
-        <div class="photo-upload">
-        <label for"photo-input" class="photo-label">
-        <span class ="photo-placeholder">
-            <i class="fa-regular fa-image"></i>
-            <span class="photo-text">+ Ajouter photo</span>
-        </span>
-            <input type="file" id="photo-input" accept="image/*" required />
-            </label>
-            <div class="photo-preview hidden">
-                <img id="photo-preview-img" alt="Aperçu de l'image" />
-            </div>
-            <p class="photo-info">jpg, png, : 4mo max</p>
-        </div>
-        <div class="form-group">
-                <label for="photo-title">Titre</label>
-                <input type="text" id="photo-title" placeholder="" required />
-        </div>
-        <div class="form-group">
-                <label for="photo-category">Catégorie</label>
-                <select id="photo-category" required>
-                </select>
-            </div>
-        <div class="trait-form"></div>
-        <div class="message-container"></div>
-            <button type="submit" class="btn-valider-photo">Valider</button>
-        </form>
-    `;
 
-    const photoInput = formContent.querySelector("#photo-input");
-    const photoPlaceholder = formContent.querySelector(".photo-placeholder");
-    const photoPreviewContainer = formContent.querySelector(".photo-preview");
-    const photoPreviewImg = formContent.querySelector("#photo-preview-img");
+    // Récupère le contenu du template pour le formulaire
+    const formTemplate = document.getElementById("form-template");
+    formModale.appendChild(formTemplate.content.cloneNode(true));
+
+    // Sélectionne les éléments injectés
+    const photoInput = formModale.querySelector("#photo-input");
+    const photoPlaceholder = formModale.querySelector(".photo-placeholder");
+    const photoPreviewContainer = formModale.querySelector(".photo-preview");
+    const photoPreviewImg = formModale.querySelector("#photo-preview-img");
 
     // Écouteur d'événement pour afficher l'aperçu de l'image sélectionnée
     photoInput.addEventListener("change", () => {
@@ -205,12 +159,12 @@ function afficherFormulaireModale() {
         if (file) {
             const reader = new FileReader();
             reader.onload = (event) => {
-                photoPreviewImg.src = event.target.result; // Charge l'image dans l'élément <img>
-                photoPlaceholder.style.display = "none"; // Masque le placeholder et l'input
+                photoPreviewImg.src = event.target.result; 
+                photoPlaceholder.style.display = "none"; 
                 photoInput.style.display = "none";
-                photoPreviewContainer.classList.remove("hidden"); // Affiche le conteneur de l'aperçu
+                photoPreviewContainer.classList.remove("hidden"); 
             };
-            reader.readAsDataURL(file); // Lit le fichier sélectionné
+            reader.readAsDataURL(file); 
         } else {
             // Si aucun fichier n’est sélectionné, on réaffiche le placeholder
             photoPlaceholder.style.display = "flex";
@@ -222,7 +176,6 @@ function afficherFormulaireModale() {
     // Organisation de la strucure 
     formModale.appendChild(backButton);
     formModale.appendChild(closeButton);
-    formModale.appendChild(formContent);
     formOverlay.appendChild(formModale);
     document.body.appendChild(formOverlay);
 
@@ -250,7 +203,7 @@ function afficherFormulaireModale() {
         { id: 2, name: "Appartements" },
         { id: 3, name: "Hotels & Restaurants" },
     ];
-    const categorySelect = formContent.querySelector("#photo-category");
+    const categorySelect = formModale.querySelector("#photo-category");
     categories.forEach((category) => {
         const option = document.createElement("option");
         option.value = category.id;
@@ -266,7 +219,7 @@ function afficherFormulaireModale() {
 
 
     // Gestion de la soumission du formulaire
-    const form = formContent.querySelector("#ajout-photo-form");
+    const form = formModale.querySelector("#ajout-photo-form");
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
         console.log("Formulaire soumis");
@@ -278,10 +231,11 @@ function afficherFormulaireModale() {
 
 // Fonction pour ajouter une photo (API)
 async function ajouterPhoto() {
-    const photoInput = document.getElementById("photo-input");
-    const titleInput = document.getElementById("photo-title");
-    const categorySelect = document.getElementById("photo-category");
-    const messageContainer = document.querySelector(".message-container");
+    const formModale = document.querySelector(".form-modale"); 
+    const photoInput = formModale.querySelector("#photo-input");
+    const titleInput = formModale.querySelector("#photo-title");
+    const categorySelect = formModale.querySelector("#photo-category");
+    const messageContainer = formModale.querySelector(".message-container");
 
     // Réinitialise le message avant chaque soumission
     messageContainer.textContent = "";
@@ -313,12 +267,13 @@ async function ajouterPhoto() {
             messageContainer.classList.add("success");
 
             // Réinitialise le formulaire après l'ajout
-            document.getElementById("ajout-photo-form").reset();
-            document.querySelector(".photo-preview").classList.add("hidden");
-            document.querySelector(".photo-placeholder").style.display = "flex";
+            formModale.querySelector("#ajout-photo-form").reset();
+            formModale.querySelector(".photo-preview").classList.add("hidden");
+            formModale.querySelector(".photo-placeholder").style.display = "flex";
 
-            // Ajoute dynamiquement la nouvelle image dans la galerie
-            ajouterProjetDansGalerie(newProjet); // Appelle une fonction pour mettre à jour le DOM
+            // Ajoute dynamiquement la nouvelle image dans les deux galeries
+            ajouterProjetDansGalerie(newProjet);  
+            ajouterProjetDansSite(newProjet);   
 
         } else {
             const errorText = await response.text();
@@ -341,13 +296,16 @@ function ajouterProjetDansGalerie(projet) {
     const img = document.createElement("img");
     const deleteButton = document.createElement("button");
 
-    img.src = projet.imageUrl; // URL de l'image du projet
-    img.alt = projet.title;    // Texte alternatif
+    img.src = projet.imageUrl; 
+    img.alt = projet.title;    
     figure.classList.add("gallery-item");
 
     deleteButton.classList.add("delete-button");
     deleteButton.innerHTML = '<i class="fa-regular fa-trash-can"></i>';
-    deleteButton.addEventListener("click", () => supprimerPhoto(projet.id, figure));
+    deleteButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        supprimerPhoto(projet.id, figure);
+    });
 
     // Ajoute l'image et le bouton de suppression à la figure
     figure.appendChild(img);
@@ -355,4 +313,24 @@ function ajouterProjetDansGalerie(projet) {
 
     // Ajoute la figure à la galerie
     modaleGallery.appendChild(figure);
+}
+
+function ajouterProjetDansSite(projet) {
+    const gallery = document.querySelector(".gallery");
+
+    // Crée les éléments nécessaires pour afficher le projet
+    const figure = document.createElement("figure");
+    const img = document.createElement("img");
+    const figcaption = document.createElement("figcaption");
+
+    img.src = projet.imageUrl; 
+    img.alt = projet.title;   
+    figcaption.textContent = projet.title; 
+
+    // Ajoute l'image et la légende à la figure
+    figure.appendChild(img);
+    figure.appendChild(figcaption);
+
+    // Ajoute la figure à la galerie principale
+    gallery.appendChild(figure);
 }
