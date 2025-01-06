@@ -11,7 +11,8 @@
         rel="stylesheet">
     <meta name="description" content="">
     <link rel="stylesheet" href="./assets/style.css">
-    <script src="script.js" defer></script>
+    <script src="login.js" defer></script>
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -19,9 +20,9 @@
         <h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
         <nav>
             <ul>
-                <li>projets</li>
-                <li>contact</li>
-                <li>login</li>
+                <li><a href="">projets</a></li>
+                <li><a href="">contact</a></li>
+                <li><a href="login.html">login</a></li>
                 <li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
             </ul>
         </nav>
@@ -29,16 +30,18 @@
     <main>
         <div class="login-container">
             <h2>Log In</h2>
-            <form>
+            <form id="login-form">
                 <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" placeholder="E-mail" required>
+                <input type="email" id="email" name="email" placeholder="" required>
 
                 <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+                <input type="password" id="password" name="password" placeholder="" required>
 
                 <button type="submit">Se connecter</button>
             </form>
             <a href="#" class="forgot-password">Mot de passe oublié</a>
+            <p id="error-message" class="error-message" style="color: red; display: none;">Email ou mot de passe
+                incorrect.</p>
         </div>
     </main>
 
