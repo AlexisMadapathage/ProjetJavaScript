@@ -1,17 +1,24 @@
+// Définition de l'URL de l'API pour la connexion
+const LOGIN_URL = "http://localhost:5678/api/users/login";
+
+// Ajout d'un événement de soumission au formulaire de connexion
 document.getElementById("login-form").addEventListener("submit", async function (event) {
     event.preventDefault(); 
+
+    // Récupère les valeurs saisies dans les champs email et mot de passe
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
     try {
-        const response = await fetch("http://localhost:5678/api/users/login", {
+        // Envoie une requête POST à l'API pour effectuer une connexion
+        const response = await fetch(LOGIN_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
+            headers: { "Content-Type": "application/json" }, // Indique que le corps de la requête est au format JSON
+            body: JSON.stringify({ email, password }) // Convertit les données saisies en chaîne JSON
         });
 
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.json(); // Récupère les données JSON envoyées par l'API
             localStorage.setItem("token", data.token); 
             window.location.href = "index.html"; 
         } else {
@@ -23,8 +30,9 @@ document.getElementById("login-form").addEventListener("submit", async function 
     }
 });
 
+// Fonction pour afficher un message d'erreur à l'utilisateur
 function afficherMessageErreur(message) {
     let messageErreur = document.getElementById("error-message");
-    messageErreur.style.display = "block";
+    messageErreur.style.display = "block"; // Rend le message visible
     messageErreur.textContent = message;
 }
